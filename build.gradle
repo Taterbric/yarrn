@@ -709,7 +709,7 @@ publishing {
         maven {
             credentials  {
                 username = "zeta"
-                password = "TNTboom123"
+                password = 'pass'
             }
             url "https://panel.repsy.io/mvn/zeta/taterbric/"
             authentication {                            // I was missing this authentication section and that's why read timeout
