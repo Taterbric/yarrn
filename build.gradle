@@ -27,13 +27,11 @@ import java.time.ZoneId
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-def minecraft_version = "inf-20100618"
+def minecraft_version = "in-20100223"
 
 def ENV = System.getenv()
 
-def now = LocalDate.now(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_ORDINAL_DATE).replace('-', 'd').substring(2)
-println("Current version: " + now)
-def build_version = now
+def build_version = LocalDate.now(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_ORDINAL_DATE).replace('-', 'd').substring(2)
 
 def yarnVersion = "${minecraft_version}+build${build_version}"
 
@@ -78,7 +76,7 @@ def tempDir = file(".gradle/temp")
 def mergedFile = file("${minecraft_version}-merged.jar")
 def intermediaryJar = file("${minecraft_version}-intermediary.jar")
 def namedJar = file("${minecraft_version}-named.jar")
-def versionFile = new File(cacheFilesMinecraft, "${minecraft_version}.json")
+def versionFile = new File("in-20100223.json")
 def clientJar = new File(cacheFilesMinecraft, "${minecraft_version}-client.jar")
 def libraries = new File(cacheFilesMinecraft, "libraries")
 def libs = new File("build/libs/")
@@ -153,7 +151,7 @@ task downloadWantedVersionManifest(dependsOn: downloadVersionsManifest) {
 	outputs.file versionFile
 
 	doLast {
-		manifestVersion = getManifestVersion(manifestFile, minecraft_version)
+		versionFile = file("in-20100223.json")
 		//nb need to re-read here in case it didn't exist before
 		if (manifestVersion.isPresent() || versionFile.exists()) {
 
@@ -198,14 +196,14 @@ task downloadMcJars(dependsOn: downloadWantedVersionManifest) {
 
 task downloadIntermediary(type: Download) {
 	group = buildMappingGroup
-	def url = "https://maven.concern.i.ng/net/textilemc/intermediary/${minecraft_version}/${minecraft_version}.tiny"
+	def url = "https://raw.githubusercontent.com/MicherGit/Yarn-Trashcan/main/in-20100223.tiny"
 	src com.google.common.net.UrlEscapers.urlFragmentEscaper().escape(url)
 	dest new File(cacheFilesMinecraft, "${minecraft_version}-intermediary.tiny")
 }
 
 task downloadIntermediaryV2(type: Download) {
 	group = buildMappingGroup
-	def url = "https://maven.concern.i.ng/net/textilemc/intermediary/${minecraft_version}/intermediary-${minecraft_version}-v2.jar"
+	def url = "https://panel.repsy.io/mvn/zeta/taterbric/net/fabricmc/intermediary/in-20100223/intermediary-in-20100223-v2.jar"
 	src com.google.common.net.UrlEscapers.urlFragmentEscaper().escape(url)
 	dest new File(cacheFilesMinecraft, "${minecraft_version}-intermediary-v2.jar")
 }
@@ -686,48 +684,6 @@ task decompileCFR(type: JavaExec, dependsOn: "mapNamedJar") {
 	}
 }
 
-javadoc {
-	dependsOn genFakeSource
-	dependsOn downloadMcLibs
-	group = "javadoc generation"
-	outputs.upToDateWhen { false }
-	options {
-		source = "8"
-		encoding = 'UTF-8'
-		charSet = 'UTF-8'
-		memberLevel = JavadocMemberLevel.PRIVATE
-		links(
-				'https://guava.dev/releases/21.0/api/docs/',
-				'https://www.javadoc.io/doc/com.google.code.gson/gson/2.8.0/',
-				'https://logging.apache.org/log4j/2.x/log4j-api/apidocs/',
-				// jsr305 need to come before jdk or the anno links are broken
-				'https://www.javadoc.io/doc/com.google.code.findbugs/jsr305/3.0.2/',
-				'https://javadoc.lwjgl.org/',
-				'http://fastutil.di.unimi.it/docs/',
-				'https://commons.apache.org/proper/commons-logging/javadocs/api-1.1.3/',
-				'https://commons.apache.org/proper/commons-lang/javadocs/api-3.5',
-				'https://commons.apache.org/proper/commons-io/javadocs/api-2.5',
-				'https://commons.apache.org/proper/commons-codec/archives/1.10/apidocs',
-				'https://commons.apache.org/proper/commons-compress/javadocs/api-1.8.1/',
-				'https://docs.oracle.com/javase/8/docs/api/'
-				// Need to add loader jd publication for env annotations!
-		)
-		// Disable the crazy super-strict doclint tool in Java 8
-		addStringOption('Xdoclint:none', '-quiet')
-	}
-	source fakeSourceDir
-	classpath = configurations.javadocClasspath.plus downloadMcLibs.outputs.files.asFileTree 
-}
-
-task javadocJar(type: Jar, dependsOn: ["javadoc"]) {
-	group = "javadoc generation"
-
-	from javadoc.destinationDir
-
-	archiveVersion.set yarnVersion
-	classifier = 'javadoc'
-}
-
 publishing {
 	publications {
 		maven(MavenPublication) {
@@ -746,15 +702,21 @@ publishing {
 			artifact(v2MergedYarnJar) {
 				classifier "mergedv2"
 			}
-			artifact javadocJar
 		}
 
 	}
-	repositories {
-		maven {
-			url "C:/Users/steve/maven"
-		}
-	}
+    repositories {
+        maven {
+            credentials  {
+                username = "zeta"
+                password = "TNTboom123"
+            }
+            url "https://panel.repsy.io/mvn/zeta/taterbric/"
+            authentication {                            // I was missing this authentication section and that's why read timeout
+                basic(BasicAuthentication)
+            }
+        }
+    }
 }
 
 
