@@ -1,2 +1,0 @@
-CLASS net/minecraft/client/f/c net/minecraft/client/particle/EntityFlameFX
-	FIELD Z flameScale F

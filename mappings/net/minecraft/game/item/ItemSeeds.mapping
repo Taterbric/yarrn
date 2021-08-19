@@ -1,2 +1,0 @@
-CLASS net/minecraft/a/b/f net/minecraft/game/item/ItemSeeds
-	FIELD as blockType I

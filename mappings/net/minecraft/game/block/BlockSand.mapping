@@ -1,2 +1,0 @@
-CLASS net/minecraft/a/a/b/w net/minecraft/game/block/BlockSand
-	METHOD e scheduleBlockUpdate (Lnet/minecraft/a/a/g;III)V

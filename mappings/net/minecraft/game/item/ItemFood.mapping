@@ -1,2 +1,0 @@
-CLASS net/minecraft/a/b/p net/minecraft/game/item/ItemFood
-	FIELD as healAmount I

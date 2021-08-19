@@ -1,2 +1,0 @@
-CLASS net/minecraft/a/b/c net/minecraft/game/item/ItemSword
-	FIELD as weaponDamage I

@@ -1,2 +1,0 @@
-CLASS net/minecraft/a/a/b/ac net/minecraft/game/block/BlockTorch
-	METHOD e dropTorchIfCantStay (Lnet/minecraft/a/a/g;III)Z
